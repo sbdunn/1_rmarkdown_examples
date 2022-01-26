@@ -6,6 +6,7 @@ output:
   html_document:
     toc: true
     toc_float: true
+    theme: yeti
 editor_options: 
   chunk_output_type: console
 ---
@@ -93,7 +94,23 @@ dygraph(q_xts) %>%
 
 ```
 
+# Peak Discharge Analysis
 
+## Data Retrieval
+```{r}
+q_max <- readNWISpeak(siteNumbers = '06752260', startDate = "", endDate = "", asDateTime = TRUE)
+```
+
+## Peak Annual Discharge Graph
+
+```{r}
+q_max_xts <- xts(q_max$peak_va, order.by = q_max$peak_dt)
+
+dygraph(q_max_xts) %>%
+  dyAxis("y", label = "Peak Annual Discharge (cfs)")  %>%
+  dyOptions(drawPoints = TRUE, pointSize = 2, colors = "blue" )
+
+```
 ## Poudre River Discharge
 
 The *Cache La Poudre River* flows east from the continental divide before joining the *Platte River* on the Colorado plains. Discharge is highly seasonal, reflecting the driving influences of precipitation and water consumption in the watershed. **Snowfall** in the winter months increases snow pack in the high mountains and is released in spring causing a dramatic and sustained spike in discharge. Flashy summer **monsoons** generate smaller peaks. High intensity and localized rain storms deliver high volumes of water to tributaries; these pulses become muted further downstream as the flow is integrated into the system. **Consumptive** water use for irrigation and drinking water supply, as well as **evapotranspiration** along the river corridor represent a major loss from the Poudre. Flows are consisently low in Fort Collins through much of the summer and fall. 
