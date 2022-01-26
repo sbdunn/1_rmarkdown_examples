@@ -23,6 +23,8 @@ library(xts)
 
 # Methods
 
+## SiteDescription
+
 The Poudre River at Lincoln Bridge is:
 
   - Downstream of only a little bit of urban stormwater
@@ -32,9 +34,6 @@ The Poudre River at Lincoln Bridge is:
   - Near an open space area and the Poudre River Trail
   
   - **Downstream of many agricultral diversions**
-
-
-## SiteDescription
 
 ![](https://waterdata.usgs.gov/nwisweb/local/state/co/text/pics/06752260big.jpg)
 
@@ -84,8 +83,6 @@ dygraph(q_xts) %>%
 
 
 
-## DyGraph example. 
-
 ### Discharge Graph with Points
 ```{r}
 dygraph(q_xts) %>%
@@ -94,25 +91,45 @@ dygraph(q_xts) %>%
 
 ```
 
-# Peak Discharge Analysis
+## Peak Discharge Analysis
 
-## Data Retrieval
+### Data Retrieval
 ```{r}
 q_max <- readNWISpeak(siteNumbers = '06752260', startDate = "", endDate = "", asDateTime = TRUE)
 ```
 
-## Peak Annual Discharge Graph
+### Peak Annual Discharge Graph
 
 ```{r}
 q_max_xts <- xts(q_max$peak_va, order.by = q_max$peak_dt)
 
-dygraph(q_max_xts) %>%
+Peak <- dygraph(q_max_xts) %>%
   dyAxis("y", label = "Peak Annual Discharge (cfs)")  %>%
   dyOptions(drawPoints = TRUE, pointSize = 2, colors = "blue" )
-
+Peak
 ```
-## Poudre River Discharge
+# Poudre River Discharge
 
 The *Cache La Poudre River* flows east from the continental divide before joining the *Platte River* on the Colorado plains. Discharge is highly seasonal, reflecting the driving influences of precipitation and water consumption in the watershed. **Snowfall** in the winter months increases snow pack in the high mountains and is released in spring causing a dramatic and sustained spike in discharge. Flashy summer **monsoons** generate smaller peaks. High intensity and localized rain storms deliver high volumes of water to tributaries; these pulses become muted further downstream as the flow is integrated into the system. **Consumptive** water use for irrigation and drinking water supply, as well as **evapotranspiration** along the river corridor represent a major loss from the Poudre. Flows are consisently low in Fort Collins through much of the summer and fall. 
+
+Shiny Graph 
+```{r}
+library(shiny)
+
+ui <- basicPage(
+  plotOutput("plot1", click = "plot_click"),
+  verbatimTextOutput("info")
+)
+
+server <- function(input, output) {
+  output$plot1 <- renderPlot({Peak})
+
+  output$info <- renderText({
+    paste0("x=", input$plot_click$x, "\ny=", input$plot_click$y)
+  })
+}
+
+shinyApp(ui, server)
+```
 
 
